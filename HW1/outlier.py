@@ -42,8 +42,8 @@ def create_qq_plots(data):
         ax.set_xlabel("Theoretical Quantiles")
         ax.set_ylabel("Sample Quantiles")
 
-    for j in range(i + 1, len(axes)):
-        fig.delaxes(axes[j])
+        for j in range(i + 1, len(axes)):
+            fig.delaxes(axes[j])
 
     plt.tight_layout()
     plt.show()
