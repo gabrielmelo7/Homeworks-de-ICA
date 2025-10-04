@@ -9,7 +9,11 @@ from matplotlib import patches
 from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
 
-PATH = "./data/SensorLog.csv"
+PATH = "./data/updated_pollution_dataset.csv"
+
+
+def apply_transformation(data: pd.DataFrame):
+    pass
 
 
 def create_qq_plots(data):
@@ -17,7 +21,6 @@ def create_qq_plots(data):
     Loads a CSV file, creates a Q-Q plot for each numeric column,
     and saves the resulting grid of plots to an image file.
     """
-
     df = data
 
     if "Timestamp" in df.columns:
@@ -29,12 +32,13 @@ def create_qq_plots(data):
     print(f"Found features: {features.tolist()}")
 
     num_features = len(features)
-    n_cols = 3  # You can change this to have more or fewer plots per row
+    n_cols = 3
     n_rows = (num_features + n_cols - 1) // n_cols
 
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols * 6, n_rows * 5))
     axes = axes.flatten()
 
+    # --- LOOP 1: Create all the necessary plots FIRST ---
     for i, feature in enumerate(features):
         ax = axes[i]
         stats.probplot(df_numeric[feature].dropna(), dist="norm", plot=ax)
@@ -42,10 +46,12 @@ def create_qq_plots(data):
         ax.set_xlabel("Theoretical Quantiles")
         ax.set_ylabel("Sample Quantiles")
 
-        for j in range(i + 1, len(axes)):
-            fig.delaxes(axes[j])
+    # --- LOOP 2: AFTER plotting, delete any unused subplots ---
+    for i in range(num_features, len(axes)):
+        fig.delaxes(axes[i])
 
     plt.tight_layout()
+    plt.savefig("qq_plots_raw_data.png")
     plt.show()
 
 
@@ -126,11 +132,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
 
 
 def main():
-    df = pd.read_csv(PATH, sep=";").iloc[:, 1:]
+    df = pd.read_csv(PATH, sep=",").iloc[:, :-1]
     df.head()
     create_qq_plots(df)
     # == Change here the features to plot in the mahalanobis visualization ==
-    find_and_plot_outliers(df, "TempIn_1 (°C)", "HumIn_1 (%)")
+    find_and_plot_outliers(df, "Temperature", "Humidity", confidence_level=0.99)
 
 
 if __name__ == "__main__":
