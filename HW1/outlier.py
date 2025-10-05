@@ -1,20 +1,20 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import chi2
+import os
 
 # matplotlib.use("module://matplotlib-backend-kitty")
 from matplotlib import patches
 from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
+from utils.qq_plots import create_qq_plots
 
-PATH = "./data/updated_pollution_dataset.csv"
-
-
-def apply_transformation(data: pd.DataFrame):
-    pass
+PATH = "./data_transformations/data_yeojohnson.csv"
 
 
-def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
+def find_and_plot_outliers(
+    df, col1, col2, confidence_level=0.95, label_col="Air Quality"
+):
     """
     Calculates Mahalanobis distance for the entire dataset to find outliers,
     then plots a 2D confidence ellipse for two specified columns.
@@ -26,9 +26,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
         confidence_level (float): The confidence level for the outlier cutoff.
     """
 
-    # == Outlier Detection (using all features) ==
-    data_array = df.to_numpy()
-    cutoff = chi2.ppf(confidence_level, df=df.shape[1])
+    # == Outlier Detection ==
+    features_df = df.drop(columns=[label_col])
+    data_array = features_df.to_numpy()
+    degrees_of_freedom = features_df.shape[1]
+    cutoff = chi2.ppf(confidence_level, df=degrees_of_freedom)
 
     distances, cov = mahalanobis_distances(data_array)
 
@@ -36,11 +38,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
     outlier_indexes = np.where(is_outlier)[0]
 
     print(f"Found {len(outlier_indexes)} outliers in {len(df)} samples.")
-    print(df[is_outlier])
 
     # == Exporting the outliers to a csv file ==
     outliers = df[is_outlier]
-    outliers.to_csv("outliers.csv")
+    print(outliers)
+    outliers.to_csv(os.path.join("results", r"outliers.csv"))
 
     # == 2D Confidence Ellipse Plot (for the chosen features) ==
     try:
@@ -91,11 +93,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
 
 
 def main():
-    df = pd.read_csv(PATH, sep=",").iloc[:, :-1]
-    df.head()
-    # create_qq_plots(df)
-    # == Change here the features to plot in the mahalanobis visualization ==
-    find_and_plot_outliers(df, "Temperature", "Humidity", confidence_level=0.99)
+    df = pd.read_csv(PATH, sep=",")
+
+    qq_plot_figure = create_qq_plots(df)
+    plt.show()
+    find_and_plot_outliers(df, "PM2.5", "NO2", confidence_level=0.99)
 
 
 if __name__ == "__main__":
