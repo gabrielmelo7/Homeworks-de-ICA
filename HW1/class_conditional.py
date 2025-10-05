@@ -22,7 +22,7 @@ def compute_class_conditional_statistics(df: pd.DataFrame, cls: str) -> pd.DataF
             "skewness": skew(aux_df[column]),
         }
 
-    return pd.DataFrame(results)
+    return pd.DataFrame(results).T
 
 
 def plot_class_conditional(df):
@@ -41,15 +41,20 @@ def plot_class_conditional(df):
         plt.suptitle(f"Histograms of {column} by Class", y=1.02)
         plt.tight_layout()
         plt.savefig(os.path.join("./results", f"{column}_histograms.png"))
-        # plt.show()
+        plt.show()
 
     # Box Plots
+    i = 0
+    plt.figure(figsize=(10, 6))
     for column in numeric_cols:
-        plt.figure(figsize=(10, 6))
+        plt.subplot(3, 3, i + 1)
         sns.boxplot(data=df, x="Air Quality", y=column)
-        plt.suptitle(f"Box Plot of {column} by Class")
-        plt.savefig(os.path.join("./results", f"{column}_boxplots.png"))
-        # plt.show()
+        plt.title(f"{column} by Class")
+        plt.savefig(os.path.join("./results", "boxplots.png"))
+        i += 1
+
+    plt.tight_layout()
+    plt.show()
 
 
 def main():

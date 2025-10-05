@@ -1,10 +1,8 @@
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 from scipy.stats import chi2
 
 # matplotlib.use("module://matplotlib-backend-kitty")
-
 from matplotlib import patches
 from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
@@ -14,45 +12,6 @@ PATH = "./data/updated_pollution_dataset.csv"
 
 def apply_transformation(data: pd.DataFrame):
     pass
-
-
-def create_qq_plots(data):
-    """
-    Loads a CSV file, creates a Q-Q plot for each numeric column,
-    and saves the resulting grid of plots to an image file.
-    """
-    df = data
-
-    if "Timestamp" in df.columns:
-        df_numeric = df.drop(columns=["Timestamp"])
-    else:
-        df_numeric = df
-
-    features = df_numeric.columns
-    print(f"Found features: {features.tolist()}")
-
-    num_features = len(features)
-    n_cols = 3
-    n_rows = (num_features + n_cols - 1) // n_cols
-
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols * 6, n_rows * 5))
-    axes = axes.flatten()
-
-    # --- LOOP 1: Create all the necessary plots FIRST ---
-    for i, feature in enumerate(features):
-        ax = axes[i]
-        stats.probplot(df_numeric[feature].dropna(), dist="norm", plot=ax)
-        ax.set_title(f"Q-Q Plot for {feature}")
-        ax.set_xlabel("Theoretical Quantiles")
-        ax.set_ylabel("Sample Quantiles")
-
-    # --- LOOP 2: AFTER plotting, delete any unused subplots ---
-    for i in range(num_features, len(axes)):
-        fig.delaxes(axes[i])
-
-    plt.tight_layout()
-    plt.savefig("qq_plots_raw_data.png")
-    plt.show()
 
 
 def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
@@ -134,7 +93,7 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
 def main():
     df = pd.read_csv(PATH, sep=",").iloc[:, :-1]
     df.head()
-    create_qq_plots(df)
+    # create_qq_plots(df)
     # == Change here the features to plot in the mahalanobis visualization ==
     find_and_plot_outliers(df, "Temperature", "Humidity", confidence_level=0.99)
 
