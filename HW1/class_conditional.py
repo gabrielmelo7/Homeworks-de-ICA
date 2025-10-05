@@ -2,6 +2,8 @@ import pandas as pd
 from scipy.stats import skew
 import numpy as np
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 PATH = "./data/updated_pollution_dataset.csv"
 
@@ -24,11 +26,33 @@ def compute_class_conditional_statistics(df: pd.DataFrame, cls: str) -> pd.DataF
 
 
 def plot_class_conditional(df):
-    # TODO
-    pass
+    numeric_cols = df.select_dtypes(include=[np.number])
+
+    # Histograms
+    for column in numeric_cols:
+        sns.displot(
+            data=df,
+            x=column,
+            col="Air Quality",
+            col_wrap=2,
+            kde=True,
+            kind="hist",
+        )
+        plt.suptitle(f"Histograms of {column} by Class", y=1.02)
+        plt.tight_layout()
+        plt.savefig(os.path.join("./results", f"{column}_histograms.png"))
+        # plt.show()
+
+    # Box Plots
+    for column in numeric_cols:
+        plt.figure(figsize=(10, 6))
+        sns.boxplot(data=df, x="Air Quality", y=column)
+        plt.suptitle(f"Box Plot of {column} by Class")
+        plt.savefig(os.path.join("./results", f"{column}_boxplots.png"))
+        # plt.show()
 
 
-if __name__ == "__main__":
+def main():
     try:
         df = pd.read_csv(PATH)
     except FileNotFoundError:
@@ -43,3 +67,9 @@ if __name__ == "__main__":
     poor_df.to_csv(os.path.join("./results", r"poor_stats.csv"))
     moderate_df.to_csv(os.path.join("./results", r"moderate_stats.csv"))
     good_df.to_csv(os.path.join("./results", r"good_stats.csv"))
+
+    plot_class_conditional(df)
+
+
+if __name__ == "__main__":
+    main()
