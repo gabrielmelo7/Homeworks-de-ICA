@@ -42,6 +42,7 @@ def pca_calculation(df:pd.DataFrame,plot:bool)->tuple[list:np.array,list:np.arra
     score_PC2 = PC2.dot(df_copy.T)
 
     df_pc = pd.DataFrame({'PC1':score_PC1, 'PC2':score_PC2}); df_pc['Air Quality'] = df['Air Quality']
+    df_pc.to_csv('PCA_Score.csv',index=False)
 
     fig,axs = plt.subplots(figsize=(12,8),dpi=300)
 
