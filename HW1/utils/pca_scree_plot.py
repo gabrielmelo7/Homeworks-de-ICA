@@ -22,12 +22,15 @@ def pca_scree_plot(eigenvalues:float, **kwargs):
 
     sum = np.sum(np.abs(eigenvalues))
     axs.bar(X,eigenvalues,color=config['barplot_color'],edgecolor=config['edgecolor'])
-    axs.plot(X,eigenvalues,color=config['plot_color'],markersize=config['markersize'],marker=config['marker'],markerfacecolor=config['markerfacecolor'],markeredgecolor=config['markeredgecolor'])
+    axs.plot(X,eigenvalues,color=config['plot_color'],markersize=config['markersize'],marker=config['marker'],markerfacecolor=config['markerfacecolor'],markeredgecolor=config['markeredgecolor'],label='Contribution')
+    axs.set_xlabel("Components in Descending Order",fontsize=12)
+    axs.set_ylabel("Eigenvalue",fontsize=12)
     for index, eigenvalue in enumerate(eigenvalues):
         axs.text(index+1,eigenvalue+0.1,
                  f'{eigenvalue/sum * 100 :.2f}%',weight=config['weight'])
     plt.grid(color='gray',alpha=0.6)
     axs.set_title('Principal Components Contribuition')
     axs.set_xticks(X)
+    axs.legend()
     return fig
     
