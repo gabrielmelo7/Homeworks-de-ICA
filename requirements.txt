@@ -4,3 +4,4 @@ numpy==2.1.1
 scipy==1.16.0
 pandas
 matplotlib
+mpl-axes-aligner
