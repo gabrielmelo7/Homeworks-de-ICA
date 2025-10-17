@@ -1,55 +1,25 @@
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 from scipy.stats import chi2
-
-# matplotlib.use("module://matplotlib-backend-kitty")
-
+import os
 from matplotlib import patches
 from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
+from utils.qq_plots import create_qq_plots
 
-PATH = "./data/SensorLog.csv"
-
-
-def create_qq_plots(data):
-    """
-    Loads a CSV file, creates a Q-Q plot for each numeric column,
-    and saves the resulting grid of plots to an image file.
-    """
-
-    df = data
-
-    if "Timestamp" in df.columns:
-        df_numeric = df.drop(columns=["Timestamp"])
-    else:
-        df_numeric = df
-
-    features = df_numeric.columns
-    print(f"Found features: {features.tolist()}")
-
-    num_features = len(features)
-    n_cols = 3  # You can change this to have more or fewer plots per row
-    n_rows = (num_features + n_cols - 1) // n_cols
-
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(n_cols * 6, n_rows * 5))
-    axes = axes.flatten()
-
-    for i, feature in enumerate(features):
-        ax = axes[i]
-        stats.probplot(df_numeric[feature].dropna(), dist="norm", plot=ax)
-        ax.set_title(f"Q-Q Plot for {feature}")
-        ax.set_xlabel("Theoretical Quantiles")
-        ax.set_ylabel("Sample Quantiles")
-
-        for j in range(i + 1, len(axes)):
-            fig.delaxes(axes[j])
-
-    plt.tight_layout()
-    plt.show()
+PATH = "./data_transformations/data_yeojohnson.csv"
+AFTER_PCA_PATH = "./data_transformations/PCA_Score.csv"
 
 
-def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
+def find_and_plot_outliers(
+    df,
+    col1,
+    col2,
+    confidence_level=0.95,
+    label_col="Air Quality",
+    img_save_name="outlier_ellipse.png",
+    save_name="outliers.csv",
+):
     """
     Calculates Mahalanobis distance for the entire dataset to find outliers,
     then plots a 2D confidence ellipse for two specified columns.
@@ -61,9 +31,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
         confidence_level (float): The confidence level for the outlier cutoff.
     """
 
-    # == Outlier Detection (using all features) ==
-    data_array = df.to_numpy()
-    cutoff = chi2.ppf(confidence_level, df=df.shape[1])
+    # == Outlier Detection ==
+    features_df = df.drop(columns=[label_col])
+    data_array = features_df.to_numpy()
+    degrees_of_freedom = features_df.shape[1]
+    cutoff = chi2.ppf(confidence_level, df=degrees_of_freedom)
 
     distances, cov = mahalanobis_distances(data_array)
 
@@ -71,11 +43,11 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
     outlier_indexes = np.where(is_outlier)[0]
 
     print(f"Found {len(outlier_indexes)} outliers in {len(df)} samples.")
-    print(df[is_outlier])
 
     # == Exporting the outliers to a csv file ==
     outliers = df[is_outlier]
-    outliers.to_csv("outliers.csv")
+    print(outliers)
+    outliers.to_csv(os.path.join("results/outliers", rf"{save_name}"))
 
     # == 2D Confidence Ellipse Plot (for the chosen features) ==
     try:
@@ -122,15 +94,26 @@ def find_and_plot_outliers(df, col1, col2, confidence_level=0.95):
     plt.ylabel(col2)
     plt.grid(True)
     plt.axis("equal")
+    plt.savefig(os.path.join("results", img_save_name))
     plt.show()
 
 
 def main():
-    df = pd.read_csv(PATH, sep=";").iloc[:, 1:]
-    df.head()
-    create_qq_plots(df)
-    # == Change here the features to plot in the mahalanobis visualization ==
-    find_and_plot_outliers(df, "TempIn_1 (°C)", "HumIn_1 (%)")
+    df = pd.read_csv(PATH, sep=",")
+    df_after_pca = pd.read_csv(AFTER_PCA_PATH, sep=",")
+
+    qq_plot_figure = create_qq_plots(df)
+    plt.show()
+
+    find_and_plot_outliers(df, "PM2.5", "NO2", confidence_level=0.99)
+    find_and_plot_outliers(
+        df_after_pca,
+        "PC1",
+        "PC2",
+        confidence_level=0.99,
+        img_save_name="outliers_ellipse_after_pca.png",
+        save_name="outliers_after_pca.csv",
+    )
 
 
 if __name__ == "__main__":
