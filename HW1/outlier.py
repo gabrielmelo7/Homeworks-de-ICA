@@ -47,7 +47,7 @@ def find_and_plot_outliers(
     # == Exporting the outliers to a csv file ==
     outliers = df[is_outlier]
     print(outliers)
-    outliers.to_csv(os.path.join("results", rf"{save_name}"))
+    outliers.to_csv(os.path.join("results/outliers", rf"{save_name}"))
 
     # == 2D Confidence Ellipse Plot (for the chosen features) ==
     try:
