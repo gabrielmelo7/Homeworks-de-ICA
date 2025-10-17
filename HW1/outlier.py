@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
 from utils.qq_plots import create_qq_plots
 
-PATH = "./data_transformations/data_yeojohnson.csv"
+PATH = "./data_transformations/data_yeojohnson_zscore.csv"
 AFTER_PCA_PATH = "./data_transformations/PCA_Score.csv"
 
 
