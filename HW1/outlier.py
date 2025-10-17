@@ -2,18 +2,22 @@ import numpy as np
 import pandas as pd
 from scipy.stats import chi2
 import os
-
-# matplotlib.use("module://matplotlib-backend-kitty")
 from matplotlib import patches
 from matplotlib import pyplot as plt
 from utils.mahalanobis import mahalanobis_distances
 from utils.qq_plots import create_qq_plots
 
 PATH = "./data_transformations/data_yeojohnson.csv"
+AFTER_PCA_PATH = "./data_transformations/PCA_Score.csv"
 
 
 def find_and_plot_outliers(
-    df, col1, col2, confidence_level=0.95, label_col="Air Quality"
+    df,
+    col1,
+    col2,
+    confidence_level=0.95,
+    label_col="Air Quality",
+    save_name="outliers.csv",
 ):
     """
     Calculates Mahalanobis distance for the entire dataset to find outliers,
@@ -42,7 +46,7 @@ def find_and_plot_outliers(
     # == Exporting the outliers to a csv file ==
     outliers = df[is_outlier]
     print(outliers)
-    outliers.to_csv(os.path.join("results", r"outliers.csv"))
+    outliers.to_csv(os.path.join("results", rf"{save_name}"))
 
     # == 2D Confidence Ellipse Plot (for the chosen features) ==
     try:
@@ -94,10 +98,19 @@ def find_and_plot_outliers(
 
 def main():
     df = pd.read_csv(PATH, sep=",")
+    df_after_pca = pd.read_csv(AFTER_PCA_PATH, sep=",")
 
     qq_plot_figure = create_qq_plots(df)
     plt.show()
+
     find_and_plot_outliers(df, "PM2.5", "NO2", confidence_level=0.99)
+    find_and_plot_outliers(
+        df_after_pca,
+        "PC1",
+        "PC2",
+        confidence_level=0.99,
+        save_name="outliers_after_pca.csv",
+    )
 
 
 if __name__ == "__main__":
