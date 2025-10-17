@@ -23,11 +23,11 @@ def pca_calculation(df:pd.DataFrame,save:bool = 0)->tuple[list:np.array,list:np.
 
     indexes = np.flip(np.argsort(eigenvalues)) #Gets descending order
     eigenvalues = eigenvalues[indexes]
-    eigenvectors = eigenvectors[indexes]
+    eigenvectors = eigenvectors[:,indexes]
 
     #Defining the vectors by the index of the highest´s eigenvalues:
-    PC1 = eigenvectors[0]
-    PC2 = eigenvectors[1]
+    PC1 = eigenvectors[:,0]
+    PC2 = eigenvectors[:,1]
     #Calculating the values of the original df in the pca´s plan
     score_PC1 = PC1.dot(df_copy.T)
     score_PC2 = PC2.dot(df_copy.T)

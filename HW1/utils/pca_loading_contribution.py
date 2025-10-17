@@ -3,7 +3,7 @@ import numpy as np
 
 def pca_loading_contribution(eigenvectors: np.array,pc:int,features):
     fig, axs = plt.subplots(figsize=(12,8))
-    vector = eigenvectors[pc-1]
+    vector = eigenvectors[:,pc-1]
     sum = np.sum(np.abs(vector))
     formated_values = [f'{np.abs(value/sum) *100:.1f}%' for value in vector]
     fig.suptitle(f"PC{pc} Features Contribution")
