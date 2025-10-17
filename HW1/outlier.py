@@ -17,6 +17,7 @@ def find_and_plot_outliers(
     col2,
     confidence_level=0.95,
     label_col="Air Quality",
+    img_save_name="outlier_ellipse.png",
     save_name="outliers.csv",
 ):
     """
@@ -93,6 +94,7 @@ def find_and_plot_outliers(
     plt.ylabel(col2)
     plt.grid(True)
     plt.axis("equal")
+    plt.savefig(os.path.join("results", img_save_name))
     plt.show()
 
 
@@ -109,6 +111,7 @@ def main():
         "PC1",
         "PC2",
         confidence_level=0.99,
+        img_save_name="outliers_ellipse_after_pca.png",
         save_name="outliers_after_pca.csv",
     )
 
