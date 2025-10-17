@@ -45,7 +45,7 @@ def plot_class_conditional(df):
 
     # Box Plots
     i = 0
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(20, 15))
     for column in numeric_cols:
         plt.subplot(3, 3, i + 1)
         sns.boxplot(data=df, x="Air Quality", y=column)
