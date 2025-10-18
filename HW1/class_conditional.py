@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 from scipy.stats import skew
 import numpy as np
 import os
@@ -26,33 +27,51 @@ def compute_class_conditional_statistics(df: pd.DataFrame, cls: str) -> pd.DataF
 
 
 def plot_class_conditional(df):
-    numeric_cols = df.select_dtypes(include=[np.number])
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    n_features = len(numeric_cols)
 
-    # Histograms
-    for column in numeric_cols:
-        sns.displot(
+    n_cols_hist = 3
+    n_rows_hist = math.ceil(n_features / n_cols_hist)
+
+    fig_hist, axes_hist = plt.subplots(
+        n_rows_hist, n_cols_hist, figsize=(15, 4 * n_rows_hist)
+    )
+    axes_hist = axes_hist.flatten()
+
+    for i, column in enumerate(numeric_cols):
+        ax = axes_hist[i]
+
+        sns.histplot(
             data=df,
             x=column,
-            col="Air Quality",
-            col_wrap=2,
+            hue="Air Quality",
             kde=True,
-            kind="hist",
+            ax=ax,
+            element="step",
+            stat="density",
+            common_norm=False,
         )
-        plt.suptitle(f"Histograms of {column} by Class", y=1.02)
-        plt.tight_layout()
-        plt.savefig(os.path.join("./results", f"{column}_histograms.png"))
-        plt.show()
+
+    for j in range(i + 1, len(axes_hist)):
+        axes_hist[j].set_visible(False)
+
+    plt.suptitle("Class-Conditional Histograms", fontsize=16, y=1.03)
+    plt.savefig(
+        os.path.join("./results/class_conditional/", "histograms_class_conditional.png")
+    )
+    plt.tight_layout()
+    plt.show()
 
     # Box Plots
     i = 0
-    plt.figure(figsize=(20, 15))
+    plt.figure(figsize=(15, 20))
     for column in numeric_cols:
         plt.subplot(3, 3, i + 1)
         sns.boxplot(data=df, x="Air Quality", y=column)
         plt.title(f"{column} by Class")
-        plt.savefig(os.path.join("./results", "boxplots.png"))
         i += 1
 
+    plt.savefig(os.path.join("./results/class_conditional/", "boxplots.png"))
     plt.tight_layout()
     plt.show()
 
