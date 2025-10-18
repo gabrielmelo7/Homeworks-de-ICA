@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 PATH = "./data/updated_pollution_dataset.csv"
+SAVE_PATH = "./results/class_conditional/"
 
 
 def compute_class_conditional_statistics(df: pd.DataFrame, cls: str) -> pd.DataFrame:
@@ -56,9 +57,7 @@ def plot_class_conditional(df):
         axes_hist[j].set_visible(False)
 
     plt.suptitle("Class-Conditional Histograms", fontsize=16, y=1.03)
-    plt.savefig(
-        os.path.join("./results/class_conditional/", "histograms_class_conditional.png")
-    )
+    plt.savefig(os.path.join(SAVE_PATH, "histograms_class_conditional.png"))
     plt.tight_layout()
     plt.show()
 
@@ -71,7 +70,7 @@ def plot_class_conditional(df):
         plt.title(f"{column} by Class")
         i += 1
 
-    plt.savefig(os.path.join("./results/class_conditional/", "boxplots.png"))
+    plt.savefig(os.path.join(SAVE_PATH, "boxplots.png"))
     plt.tight_layout()
     plt.show()
 
@@ -87,10 +86,10 @@ def main():
     moderate_df = compute_class_conditional_statistics(df, cls="Moderate")
     good_df = compute_class_conditional_statistics(df, cls="Good")
 
-    har_df.to_csv(os.path.join("./results", r"har_stats.csv"))
-    poor_df.to_csv(os.path.join("./results", r"poor_stats.csv"))
-    moderate_df.to_csv(os.path.join("./results", r"moderate_stats.csv"))
-    good_df.to_csv(os.path.join("./results", r"good_stats.csv"))
+    har_df.to_csv(os.path.join(SAVE_PATH, r"har_stats.csv"))
+    poor_df.to_csv(os.path.join(SAVE_PATH, r"poor_stats.csv"))
+    moderate_df.to_csv(os.path.join(SAVE_PATH, r"moderate_stats.csv"))
+    good_df.to_csv(os.path.join(SAVE_PATH, r"good_stats.csv"))
 
     plot_class_conditional(df)
 
