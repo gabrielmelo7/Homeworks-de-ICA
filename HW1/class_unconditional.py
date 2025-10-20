@@ -31,12 +31,12 @@ def columns_plot(df: pd.core.frame.DataFrame): #-> matplotlib.figure.Figure:
     for i in range(rows):
         for j in range(rows):
             sns.histplot(data=df, x=df.columns[iterator], ax=axs_hist[i,j], kde=True)
-            sns.violinplot(data=df, x = df.columns[iterator], ax=axs_box[i,j])
+            sns.boxplot(data=df, x = df.columns[iterator], ax=axs_box[i,j])
             iterator += 1
 
     # Now we can add the titles and finish the function
     fig_hist.suptitle("Histogramas dos preditores")
-    fig_box.suptitle("Violin-plots dos preditores")
+    fig_box.suptitle("Box-plots dos preditores")
     fig_hist.tight_layout()
     fig_box.tight_layout()
 
@@ -76,7 +76,7 @@ air_data = pd.read_csv("./data/updated_pollution_dataset.csv")
 # Now we can apply the functions and obtain our results.
 histograms, boxplots  = columns_plot(air_data)
 metrics_df = unconditional_stats(air_data)
-metrics_df.to_csv(os.path.join("./results", r"air_quality_stats.csv"))
-histograms.savefig(os.path.join("./results", r"UnconditionalHistograms.png"))
-boxplots.savefig(os.path.join("./results", r"UnconditionalViolinPlots.png"))
+metrics_df.to_csv(os.path.join("./results/class_unconditional", r"air_quality_stats.csv"))
+histograms.savefig(os.path.join("./results/class_unconditional", r"UnconditionalHistograms.png"))
+boxplots.savefig(os.path.join("./results/class_unconditional", r"UnconditionalBoxPlots.png"))
 
