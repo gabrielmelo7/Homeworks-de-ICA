@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -69,14 +70,19 @@ def unconditional_stats(df: pd.core.frame.DataFrame) -> pd.core.frame.DataFrame:
     # Now we return a DataFrame which contains the metrics as rows and the predictors as columns
     return pd.DataFrame(results)
 
+# Getting the names from the given arguments
+data_path = sys.argv[1] 
+csv_name = sys.argv[2]
+hist_name = sys.argv[3]
+box_name = sys.argv[4]
 
 # First we read the data
-air_data = pd.read_csv("./data/updated_pollution_dataset.csv")
+air_data = pd.read_csv(data_path)
 
 # Now we can apply the functions and obtain our results.
 histograms, boxplots  = columns_plot(air_data)
 metrics_df = unconditional_stats(air_data)
-metrics_df.to_csv(os.path.join("./results/class_unconditional", r"air_quality_stats.csv"))
-histograms.savefig(os.path.join("./results/class_unconditional", r"UnconditionalHistograms.png"))
-boxplots.savefig(os.path.join("./results/class_unconditional", r"UnconditionalBoxPlots.png"))
+metrics_df.to_csv(os.path.join("./results/class_unconditional", csv_name))
+histograms.savefig(os.path.join("./results/class_unconditional", hist_name))
+boxplots.savefig(os.path.join("./results/class_unconditional", box_name))
 
