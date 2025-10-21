@@ -1,7 +1,5 @@
 # 🚀 Passo a Passo para Reprodução dos Resultados do HW1 🚀
 
-Aqui está o guia para reproduzir a análise, seguindo os passos solicitados.
-
 ---
 
 ## 💻 1. Criar o `.venv` e instalar as dependências
@@ -44,7 +42,7 @@ pip install -r requirements.txt
 
 ## 📊 2. Rodar os códigos para analisar as métricas estatísticas
 
-Execute os scripts de análise monovariada para gerar as estatísticas descritivas (Tabelas II, III, IV) e os histogramas/boxplots iniciais (Figuras 2, 3, 4).
+Execute os scripts de análise monovariada para gerar as estatísticas descritivas e os histogramas/boxplots iniciais.
 
 * **Análise Incondicional (geral):**
 
@@ -62,7 +60,7 @@ python HW1/class_conditional.py
 
 ## 🔗 3. Rodar o código para analisar a correlação
 
-Execute este script para gerar a matriz de correlação (Figura 5) e os gráficos de dispersão (Figura 6).
+Execute este script para gerar a matriz de correlação e os gráficos de dispersão.
 
 ```bash
 python HW1/bivariate_analysis.py
@@ -72,13 +70,11 @@ python HW1/bivariate_analysis.py
 
 ## ✨ 4. Rodar o código para normalizar os dados
 
-Execute este script para aplicar as transformações (Yeo-Johnson + Z-score) e salvar os dados processados (Figura 7). Esses dados transformados serão usados nos próximos passos.
+Execute este script para aplicar as transformações (Yeo-Johnson + Z-score) e salvar os dados processados. Esses dados transformados serão usados nos próximos passos.
 
 ```bash
 python HW1/save_data_transformation.py
 ```
-
-> Este script também gera os resultados do **PCA** (Figuras 8, 9) salvando os scores, que serão usados no passo 6.
 
 ---
 
@@ -97,7 +93,7 @@ jupyter notebook
 3. Dentro do notebook:
 
    * Importe as funções necessárias do diretório `HW1/utils/` (ex.: `pca_calculation`, `pca_biplot`, `pca_scree_plot`).
-   * Carregue os dados normalizados (criados no passo 4), por exemplo:
+   * Carregue os dados normalizados, por exemplo:
 
      ```
      HW1/data_transformations/data_yeojohnson_zscore.csv
