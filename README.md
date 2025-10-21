@@ -104,7 +104,7 @@ jupyter notebook
 
 ## 🎯 6. Rodar o código para realizar a detecção de outliers
 
-Finalmente, execute o script de detecção de outliers, que usará os dados normalizados e os scores do PCA para identificar e plotar os outliers (Figura 10).
+Finalmente, execute o script de detecção de outliers, que usará os dados normalizados e os scores do PCA para identificar e plotar os outliers.
 
 ```bash
 python HW1/outlier.py
