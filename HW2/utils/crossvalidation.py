@@ -8,6 +8,14 @@ def cross_validation_ridge(x_train:pd.DataFrame,y_train:pd.DataFrame,lamb,folds=
     np.random.seed(42)
     seq = np.arange(x_train.shape[0])
     np.random.shuffle(seq)
+    x_train = x_train.copy(); y_train = y_train.copy()
+    map_values = {
+        'Hazardous': 4,
+        'Poor': 3,
+        'Moderate': 2,
+        'Good': 1
+        }
+    x_train["Air Quality"] = x_train["Air Quality"].map(map_values)
     x_train_random = x_train.copy().iloc[seq]
     y_train_random = y_train.copy().iloc[seq]
     x_train_subsets = np.split(x_train_random,10)
@@ -25,7 +33,7 @@ def cross_validation_ridge(x_train:pd.DataFrame,y_train:pd.DataFrame,lamb,folds=
             R2 = r2(y_predicted, y_train_subsets[i]); r2_results.append(R2)
         mean_rmse = np.mean(RMSE_results); mean_r2 = np.mean(r2_results)
         results.append((mean_rmse,mean_r2,k,b))
-    final = sorted(results, key=lambda x: x[1],reverse=True)
+    final = sorted(results, key=lambda x: x[0],reverse=True)
     final_df = pd.DataFrame(final,columns=["Mean_RMSE","Mean_r2","lamb","betha"])
 
     return final_df

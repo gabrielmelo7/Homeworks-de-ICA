@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from Ridge_regression import predicted_ridge
+from utils.ridge_regression_module import Ridge_regression as rr
 
 
 def comparison_predicted_real(b,y_real,dataset,**kwargs):
@@ -16,11 +16,17 @@ def comparison_predicted_real(b,y_real,dataset,**kwargs):
     """
     dataset= dataset.copy()
 
-    if dataset.shape[1] > 8:
-        classification = dataset.iloc[:,-1]
-        dataset.drop(columns=dataset.columns[-1])
+    classification = dataset.iloc[:,-1]
 
-    y_pred = predicted_ridge(dataset.iloc[:,:-1],b)
+    map_values = {
+        'Hazardous': 4,
+        'Poor': 3,
+        'Moderate': 2,
+        'Good': 1
+        }
+    dataset["Air Quality"] = dataset["Air Quality"].map(map_values)
+
+    y_pred = rr.predicted_ridge_static(dataset,b)
 
     default={
         'classification':True
@@ -73,3 +79,48 @@ def comparison_scratch_buitin(r2_scratch, r2_builtin):
     fig.tight_layout()
     return axs
     
+
+def skewness_res_plot(transformed_data:pd.DataFrame):
+    """
+    INPUT:
+
+    transformed_data: dataframe containing yeojohnson transformation of original data
+
+    OUTPUT:
+    figure containing all the histograms
+    """
+    size = len(transformed_data.columns[:-1])
+    c = np.sqrt(size)
+    if c - int(c) !=0:
+        c = int(c)
+        l = c+1
+    else:
+        c = int(c)
+        l = int(c)
+    fig, axs = plt.subplots(l,c,figsize=(12,8))
+    for index,column in enumerate(transformed_data.columns[:-1]):
+        sns.histplot(transformed_data,x=column,ax=axs[index//3,index%3])
+    plt.tight_layout(h_pad=0.5)
+    fig.suptitle("skew-solved histograms")
+    fig.subplots_adjust(top=0.9)
+    return fig
+
+
+def correlation_plot(transformed_data:pd.DataFrame):
+    map_values = {
+    'Hazardous': 4,
+    'Poor': 3,
+    'Moderate': 2,
+    'Good': 1
+    }
+    transformed_data = transformed_data.copy()
+    transformed_data["Air Quality"] = transformed_data["Air Quality"].map(map_values)
+    corr_matrix = transformed_data.corr()
+    fig, axs = plt.subplots(1,1,figsize=(8,4))
+    sns.heatmap(corr_matrix[['SO2']].sort_values(by='SO2', ascending=False).T,
+                annot=True,
+                fmt='.2f',
+                cmap='coolwarm')
+    fig.tight_layout(rect=(0,0,1,1))
+    fig.subplots_adjust(top=0.9)
+    return fig
