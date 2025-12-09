@@ -2,12 +2,14 @@ import numpy as np
 from utils.olsregression import ols_regression
 from utils.train_test_split import train_test_split 
 from utils.rmse import root_mean_square_error
+from utils.plotcompare import plotcompare
 from utils.r_squared import r2 
 from utils.crossvalidation import cross_validation
 from sklearn.linear_model import LinearRegression
 import pandas as pd
+import os
 
-data_df = pd.read_csv("data/data_yeojohnson_zscore.csv") 
+data_df = pd.read_csv("data/data_yeojohnson.csv") 
 
 map_values = {
         'Hazardous': 4,
@@ -16,11 +18,9 @@ map_values = {
         'Good': 1
         }
 
+inverse_map = {v: k for k, v in map_values.items()}
+
 data_df['Air Quality'].replace(map_values, inplace=True)
-
-data_df.head()
-
-data_df.info()
 
 x_train_set, x_test_set, y_train_set, y_test_set = train_test_split(data_df, "SO2")
 
@@ -56,3 +56,13 @@ print(f"Scikit-learn rmse: {rmse}\n")
 print(f"Scikit-learn rmse_std: {rmse_std}\n")
 print(f"Scikit-learn r2: {r2}\n")
 print(f"Scikit-learn r2_std: {r2_std}\n")
+
+class_values = x_test_set[:, 8]
+class_values = np.array([inverse_map[val] for val in class_values])
+
+class_values
+
+fig = plotcompare(y_test_set, ols_predictions, class_values)
+fig.savefig(os.path.join("./results", r"plot_comparison.png"))
+
+
