@@ -4,7 +4,7 @@ from utils.train_test_split import train_test_split
 from utils.rmse import root_mean_square_error
 from utils.plotcompare import plotcompare
 from utils.r_squared import r2 
-from utils.crossvalidation import cross_validation
+from utils.crossvalOLS import cross_validation
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import os
