@@ -37,4 +37,8 @@ for i in range(3,10):
     #Principal stats:
     print(lda_obj.principal_stats())
 
+lda_obj = lda("data/data_yeojohnson_zscore.csv")
+fig = lda_obj.lda_plot();fig.tight_layout(); fig.savefig(f"images/lda_plot.png",dpi=100);plt.close()
+fig = lda_obj.lda_3d_plot(); fig.savefig(f"images/lda_3d_plot.png",bbox_inches='tight');plt.close()
+
     #time.sleep(0.5)
