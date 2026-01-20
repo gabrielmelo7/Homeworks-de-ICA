@@ -37,7 +37,12 @@ for i in range(3,10):
     #Principal stats:
     print(lda_obj.principal_stats())
 
-lda_obj = lda("data/data_yeojohnson_zscore.csv")
+lda_obj = lda("data/data_yeojohnson_zscore.csv",7)
+fig = lda_obj.corr_matrix_plot();fig.tight_layout();fig.savefig("images/Correlation_matrix.png");plt.close()
+    #Variance explanation by LDA:
+fig = lda_obj.lda_variance_plot();fig.tight_layout();fig.savefig("images/Variance_lda_plot.png");plt.close()
+    #Confusion matrix
+fig = lda_obj.confusion_matrix_plot(); fig.tight_layout();fig.savefig("images/Confusion Matrix.png");plt.close()
 fig = lda_obj.lda_plot();fig.tight_layout(); fig.savefig(f"images/lda_plot.png",dpi=100);plt.close()
 fig = lda_obj.lda_3d_plot(); fig.savefig(f"images/lda_3d_plot.png",bbox_inches='tight');plt.close()
 

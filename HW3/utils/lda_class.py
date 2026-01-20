@@ -71,6 +71,8 @@ class lda:
         fig,axs = plt.subplots(1,1,figsize=(8,6),dpi=150)
         self.cof_matrix= confusion_matrix(self.test_y,predicted)
         sns.heatmap(self.cof_matrix, cmap="Blues",annot=True, fmt='d')
+        axs.xaxis.set_ticklabels(['Hazardous','Poor','Moderate','Good'])
+        axs.yaxis.set_ticklabels(['Hazardous','Poor','Moderate','Good'])
         return fig
     
     def recall(self):
