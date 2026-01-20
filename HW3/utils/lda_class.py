@@ -5,6 +5,8 @@ import seaborn as sns
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import confusion_matrix
 from utils.train_test_split import splitter
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import ListedColormap
 
 """
 Primary steps, loading dataset
@@ -69,6 +71,8 @@ class lda:
         fig,axs = plt.subplots(1,1,figsize=(8,6),dpi=150)
         self.cof_matrix= confusion_matrix(self.test_y,predicted)
         sns.heatmap(self.cof_matrix, cmap="Blues",annot=True, fmt='d')
+        axs.xaxis.set_ticklabels(['Hazardous','Poor','Moderate','Good'])
+        axs.yaxis.set_ticklabels(['Hazardous','Poor','Moderate','Good'])
         return fig
     
     def recall(self):
@@ -157,7 +161,48 @@ class lda:
                 for i in range(4)
             ]) + "\n"
         )
+    
 
+    def lda_plot(self):
+        test_y = self.test_y.copy()
+        label_remapping = {'1': "Hazardous", '2': "Poor",'3':"Moderate",'4':"Good"}
+        fig, axs = plt.subplots(1,1,figsize=(12,8))
+        X_r = self.lda.transform(self.test_x[self.columns])
+        X = X_r[:,0]
+        Y = X_r[:,1]
+        sns.scatterplot(x=X,y=Y,hue=test_y,s=70,palette=sns.color_palette('viridis',4))
+        axs.set_xlabel("LDA_1")
+        axs.set_ylabel("LDA_2")
+        handles, labels = axs.get_legend_handles_labels()
+        print(labels)
+
+        label_mapped = [label_remapping[item] for item in labels]
+
+        plt.legend(handles,label_mapped)
+        
+        return fig
+    
+    def lda_3d_plot(self):
+        test_y = self.test_y.copy()
+        label_remapping = {1: "Hazardous", 2: "Poor",3:"Moderate",4:"Good"}
+        X_r = self.lda.transform(self.test_x[self.columns])
+        X = X_r[:,0]
+        Y = X_r[:,1]
+        Z = X_r[:,2]
+        fig = plt.figure(figsize=(10,10))
+        ax = Axes3D(fig, auto_add_to_figure=False)
+        fig.add_axes(ax)
+
+        cmap = ListedColormap(sns.color_palette('viridis',256).as_hex())
+        sc = ax.scatter(X,Y,Z, s=40, c=test_y, marker='o', cmap=cmap)
+        ax.set_xlabel("LD1")
+        ax.set_ylabel("LD2")
+        ax.set_zlabel("LD3")
+        handles, _ = sc.legend_elements()
+        plt.legend(handles,['Hazardous',"Poor","Moderate","Good"])
+
+        
+        return fig
         
         
 
