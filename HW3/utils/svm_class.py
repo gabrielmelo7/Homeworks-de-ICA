@@ -1,4 +1,5 @@
 from sklearn.svm import SVC
+from sklearn.inspection import DecisionBoundaryDisplay
 from matplotlib import pyplot as plt
 from sklearn import metrics
 
@@ -48,3 +49,43 @@ class SVM:
         plt.title(f"Matriz de Confusão - Kernel {self.method}")
         plt.savefig(f"./images/Matriz_de_Confusão-Kernel_{self.method}.jpg")
         plt.close()
+
+    def plot_decision_boundary(self):
+        if self.x_train_ref.shape[1] != 2:
+            print(
+                f"ERRO: O plot requer 2 features. Dados atuais: {self.x_train_ref.shape[1]}"
+            )
+            return
+
+        fig, ax = plt.subplots(figsize=(10, 8))
+
+        DecisionBoundaryDisplay.from_estimator(
+            self.model,
+            self.x_train_ref,
+            response_method="predict",
+            cmap="coolwarm",
+            plot_method="pcolormesh",
+            shading="auto",
+            alpha=0.6,
+            ax=ax,
+        )
+
+        if hasattr(self.x_train_ref, "iloc"):
+            x_axis = self.x_train_ref.iloc[:, 0]
+            y_axis = self.x_train_ref.iloc[:, 1]
+        else:
+            x_axis = self.x_train_ref[:, 0]
+            y_axis = self.x_train_ref[:, 1]
+
+        ax.scatter(
+            x_axis, y_axis, c=self.y_train_ref, edgecolors="k", cmap="coolwarm", s=50
+        )
+
+        plt.title(f"Decision Boundary (Kernel: {self.method})")
+
+        if hasattr(self.x_train_ref, "columns"):
+            plt.xlabel(self.x_train_ref.columns[0])
+            plt.ylabel(self.x_train_ref.columns[1])
+
+        plt.savefig(f"./images/Decision_Boundary-Kernel_{self.method}.jpg")
+        plt.show()
