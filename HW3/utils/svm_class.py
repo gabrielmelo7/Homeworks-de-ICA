@@ -1,4 +1,5 @@
 from sklearn.svm import SVC
+from matplotlib.colors import ListedColormap
 from sklearn.inspection import DecisionBoundaryDisplay
 from matplotlib import pyplot as plt
 from sklearn import metrics
@@ -58,15 +59,17 @@ class SVM:
             return
 
         fig, ax = plt.subplots(figsize=(10, 8))
+        colors_points = ["#440154", "#31688e", "#35b779", "#fde725"]
+        custom_cmap = ListedColormap(colors_points)
 
         DecisionBoundaryDisplay.from_estimator(
             self.model,
             self.x_train_ref,
             response_method="predict",
-            cmap="coolwarm",
+            cmap=custom_cmap,
             plot_method="pcolormesh",
             shading="auto",
-            alpha=0.6,
+            alpha=0.3,
             ax=ax,
         )
 
@@ -77,8 +80,8 @@ class SVM:
             x_axis = self.x_train_ref[:, 0]
             y_axis = self.x_train_ref[:, 1]
 
-        ax.scatter(
-            x_axis, y_axis, c=self.y_train_ref, edgecolors="k", cmap="coolwarm", s=50
+        scatter = ax.scatter(
+            x_axis, y_axis, c=self.y_train_ref, edgecolors="k", cmap=custom_cmap, s=50
         )
 
         plt.title(f"Decision Boundary (Kernel: {self.method})")
